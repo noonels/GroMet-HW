@@ -1,3 +1,7 @@
+/* GroMet Sensor Pod Code
+ * Authors: Matthew Healy, Shelby Luttrell, Austin Price
+ */
+
 #include <ESP8266WiFi.h>
 #include <WiFiUDP.h>
 
