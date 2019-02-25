@@ -17,16 +17,16 @@ byte fromserver = 0;
 char json[SIZE];
 
 void setup() {
-  pinMode(HUMID_PIN, INPUT_PULLUP);
-  pinMode(LIGHT_PIN, INPUT_PULLUP);
+  pinMode(HUMID_PIN, INPUT); // not on ESP01
+  pinMode(LIGHT_PIN, INPUT);
   Serial.begin(115200);
   WiFi.begin(ssid, passwd);
-  delay(10); // give serial time to begin working
+  delay(100); // give serial time to begin working
 
   Serial.print("connecting");
   while (WiFi.status() != WL_CONNECTED) {
-  delay(500);
-  Serial.print(".");
+    delay(500);
+    Serial.print(".");
   }
 
   Serial.println("");
@@ -35,13 +35,13 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   char data[ID.length()];
-  ID.toCharArray(data, ID.length());   //convert ID from String to char*
+  ID.toCharArray(data, ID.length());
 }
 
 void loop() {
   int a = analogRead(HUMID_PIN);
   char* humidity;
-  itoa(a, humidity, 10);  //convert int to char*, base 10
+  itoa(a, humidity, 10);
   a = analogRead(LIGHT_PIN);
   char* light;
   itoa(a, light, 10);
