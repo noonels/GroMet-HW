@@ -1,5 +1,5 @@
 #include <ESP8266WiFi.h>
-#include <WiFiUDP.h>
+#include <WiFiUdp.h>
 
 #define SIZE (255)
 
@@ -9,7 +9,7 @@ const char* ssid     = "GroMet Network";
 const char* passwd   = "wallace";
 const IPAddress host = (192, 168, 0, 1);
 const int    port    = 80;
-const String ID      = WiFi.macAddress();
+String ID      = WiFi.macAddress();
 
 WiFiUDP udp;
 byte serdata    = 0;
@@ -34,18 +34,19 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-  char data[ID.length()];
-  ID.toCharArray(data, ID.length());
+  randomSeed(analogRead(0)); // seed random for debug mode
 }
 
 void loop() {
   char* humidity;
   char* light;
   itoa(analogRead(HUMID_PIN), humidity, 10);
-  itoa(analogRead(LIGHT_PIN), light, 10);
+  itoa(analogRead(LIGHT_PIN), humidity, 10);
+  //itoa(random(500,900), humidity, 10);
+  //itoa(random(0,256), light, 10);
   
   strcat(json, "{\"ID\":");
-  strcat(json, data);
+  strcat(json, ID.c_str());
   strcat(json, ",\"humidity\":");
   strcat(json, humidity);
   strcat(json, ",\"lightExposure\":");
@@ -57,4 +58,6 @@ void loop() {
     udp.write(json);
     udp.endPacket();
   }
+  // TODO make less clock synchronous [healym 2/26/19]
+  delay(60 * 1000 * 5); // publish every 5 minutes
 }
