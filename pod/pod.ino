@@ -40,10 +40,10 @@ void setup() {
 void loop() {
   char* humidity;
   char* light;
-  itoa(analogRead(HUMID_PIN), humidity, 10);
-  itoa(analogRead(LIGHT_PIN), humidity, 10);
-  //itoa(random(500,900), humidity, 10);
-  //itoa(random(0,256), light, 10);
+  //itoa(analogRead(HUMID_PIN), humidity, 10);
+  //itoa(analogRead(LIGHT_PIN), humidity, 10);
+  itoa(random(500,900), humidity, 10);
+  itoa(random(0,256), light, 10);
   
   strcat(json, "{\"ID\":");
   strcat(json, ID.c_str());
