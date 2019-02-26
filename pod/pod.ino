@@ -39,12 +39,10 @@ void setup() {
 }
 
 void loop() {
-  int a = analogRead(HUMID_PIN);
   char* humidity;
-  itoa(a, humidity, 10);
-  a = analogRead(LIGHT_PIN);
   char* light;
-  itoa(a, light, 10);
+  itoa(analogRead(HUMID_PIN), humidity, 10);
+  itoa(analogRead(LIGHT_PIN), light, 10);
   
   strcat(json, "{\"ID\":");
   strcat(json, data);
