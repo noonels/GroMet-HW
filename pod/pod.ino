@@ -1,5 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+#include <ArduinoJson.h>
+#include "pod.h"
 
 #define SIZE (255)
 
@@ -8,7 +10,7 @@ const int LIGHT_PIN  = 0;
 const char* ssid     = "GroMet Network";
 const char* passwd   = "wallace";
 const IPAddress host = (192, 168, 0, 1);
-const int    port    = 80;
+const int    port    = 5000;
 String ID      = WiFi.macAddress();
 
 WiFiUDP udp;
@@ -38,26 +40,32 @@ void setup() {
 }
 
 void loop() {
-  char* humidity;
-  char* light;
-  //itoa(analogRead(HUMID_PIN), humidity, 10);
-  //itoa(analogRead(LIGHT_PIN), humidity, 10);
-  itoa(random(500,900), humidity, 10);
-  itoa(random(0,256), light, 10);
-  
-  strcat(json, "{\"ID\":");
-  strcat(json, ID.c_str());
-  strcat(json, ",\"humidity\":");
-  strcat(json, humidity);
-  strcat(json, ",\"lightExposure\":");
-  strcat(json, light);
-  strcat(json, "}");
+  int humidity;
+  int light;
+
+//  humidity = analogRead(HUMID_PIN); // no analog on ESP01
+//  light = analogRead(LIGHT_PIN);
+  humidity = random(500, 900);
+  light = random(0, 256);
 
   // SEND DATA
-  if(udp.beginPacket(host, port)) {
-    udp.write(json);
-    udp.endPacket();
-  }
+  sendData(humidity, light);
+
   // TODO make less clock synchronous [healym 2/26/19]
   delay(60 * 1000 * 5); // publish every 5 minutes
 }
+
+void sendData(int humidity, int light) {
+  DynamicJsonDocument json(1024);
+
+  json["ID"] = ID.c_str();
+  json["humidity"] = humidity;
+  json["light_exposure"] = light;
+  
+  if(udp.beginPacket(host, port)) {
+    serializeJson(json, udp);
+    udp.println();
+    udp.endPacket();
+  }
+}
+
